@@ -31,13 +31,11 @@ In addition, this project will include:
 ### Wireframes
 
 This app will consist of a single screen with game board, game controls, and nav links to the Github, my LinkedIn,
-and the About modal.  Game controls will include Start, Stop, and Reset buttons as well as a slider to control the speed.  On the left, three clickable shapes will be used to toggle between the types of grids available.  On the right, there will be three (or more) clickable gradient-filled rectangles used to toggle between color schemes (see Bonus Features).  Additionally, a drop-down will be added to the Controls to toggle between different rule sets (again, see Bonus Features).
+and the About modal.  Game controls will include Start, Stop, and Reset buttons.  On the left, three clickable buttons will be used to toggle between the difficulties available.  On the right, there will be three (or more) clickable gradient-filled rectangles used to toggle between color schemes (see Bonus Features).
 
-![wireframes](images/js_wireframe.jpeg)
+![wireframes](wireframes/splash.png)
 
 ### Architecture and Technologies
-
-**NB**: one of the main things you should be researching and deciding upon while you write this proposal is what technologies you plan to use.  Identify and create a plan of attack for the major technical challenges in your project.  It's okay if you don't have all the details of implementation fleshed out, but you should have a solid roadmap by Monday morning.
 
 This project will be implemented with the following technologies:
 
@@ -49,9 +47,9 @@ In addition to the webpack entry file, there will be three scripts involved in t
 
 `board.js`: this script will handle the logic for creating and updating the necessary `Easel.js` elements and rendering them to the DOM.
 
-`automata.js`: this script will handle the logic behind the scenes.  An Automata object will hold a `type` (hexagon, triangle, or square) and a 2D array of `Cell`s.  It will be responsible for doing neighbor checks for each `Cell` upon iteration and updating the `Cell` array appropriately.
+`game.js`: this script will handle the logic behind the scenes.  A Game object will hold a `difficulty` (easy, medium, or hard) and a 2D array of `Dot`s.  It will be responsible for validating moves on each `Dot` upon iteration and updating the `Dot` array appropriately.
 
-`cell.js`: this lightweight script will house the constructor and update functions for the `Cell` objects.  Each `Cell` will contain a `type` (hexagon, triangle, or square) and an `aliveState` (`true` or `false`).
+`dot.js`: this lightweight script will house the constructor and update functions for the `Dot` objects.  Each `Dot` will contain a `difficulty` (easy, medium, or hard) and an `quotaState` (`integer array`).
 
 ### Implementation Timeline
 
@@ -60,30 +58,29 @@ In addition to the webpack entry file, there will be three scripts involved in t
 - Get a green bundle with `webpack`
 - Learn enough `Easel.js` to render an object to the `Canvas` element
 
-**Day 2**: Dedicate this day to learning the `Easel.js` API.  First, build out the `Cell` object to connect to the `Board` object.  Then, use `board.js` to create and render at least the square grid, ideally all 3 grid types.  Build in the ability to toggle the live/dead states on click for each cell.  Goals for the day:
+**Day 2**: Dedicate this day to learning the `Easel.js` API.  First, build out the `Dot` object to connect to the `Board` object.  Then, use `board.js` to create and render at least the easy grid, ideally all 3 grid types.  Build in the ability to replace the dots on move for each dot.  Goals for the day:
 
-- Complete the `cell.js` module (constructor, update functions)
+- Complete the `dot.js` module (constructor, update functions)
 - Render a square grid to the `Canvas` using `Easel.js`
-- Make each cell in the grid clickable, toggling the state of the square on click
-- Do the same for triangular and hexagonal grids
+- Make each dot in the grid clickable, toggling the state of the board on click
+- Do the same for medium and hard grids
 
-**Day 3**: Create the automata logic backend.  Build out modular functions for handling the different grid types along with their unique neighbor checks and rule sets.  Incorporate the automata logic into the `Board.js` rendering.  Goals for the day:
+**Day 3**: Create the dots logic backend.  Build out modular functions for handling the different grid types along with their unique neighbor checks and rule sets.  Incorporate the logic into the `Board.js` rendering.  Goals for the day:
 
-- Export an `Automata` object with correct type and handling logic
+- Export aa `Game` object with correct type and handling logic
 - Have a functional grid on the `Canvas` frontend that correctly handles iterations from one generation of the game to the next
 
 
 **Day 4**: Install the controls for the user to interact with the game.  Style the frontend, making it polished and professional.  Goals for the day:
 
-- Create controls for game speed, stop, start, reset, and shape type
+- Create controls for level choice, stop, start, reset, and color scheme
 - Have a styled `Canvas`, nice looking controls and title
-- If time: include buttons on the side to toggle the color scheme of the cells
+- If time: include buttons on the side to toggle the color scheme of the dots
 
 
 ### Bonus features
 
-There are many directions this cellular automata engine could eventually go.  Some anticipated updates are:
+There are many directions this Two Dots engine could eventually go.  Some anticipated updates are:
 
 - [ ] Add options for different rule sets
 - [ ] Add multiple choices for starting states that are interesting
-- [ ] Explore multi-state versions of the game, such as the ones outlined [here](https://cs.stanford.edu/people/eroberts/courses/soco/projects/2008-09/modeling-natural-systems/gameOfLife2.html)
