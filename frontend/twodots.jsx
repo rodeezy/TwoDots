@@ -1,5 +1,6 @@
 const spaget = () => console.log('spaghet');
-const Board = require('./board')
+const Board = require('./board');
+const Game = require('./game');
 
 document.addEventListener('DOMContentLoaded', ()=>{
   window.spaget = spaget;
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   board.makeStage();
   window.canvas = document.getElementById('Canvas');
   window.makeCircle = board.makeCircle.bind(board);
-  window.stage=board.stage
+  window.board=board;
+
   // init();
 });
