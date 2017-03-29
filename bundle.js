@@ -109,11 +109,9 @@ var Board = function () {
 
     this.canvas = document.getElementById('Canvas');
     this.stage = new createjs.Stage("Canvas");
-    // this.stage.enableMouseOver();
-    // createjs.Ticker.addEventListener("tick", this.stage);
-    // createjs.Ticker.addEventListener("tick", this.tick);
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"];
     this.circles = [];
+    this.lines = [];
   }
 
   _createClass(Board, [{
@@ -137,7 +135,6 @@ var Board = function () {
       circle.y = yPos;
       this.stage.addChild(circle);
       circle.addEventListener("mousedown", function () {
-        console.log(circle.x);
         if (!_this.isSelected()) {
           _this.circles.push(circle);
         }
@@ -151,7 +148,9 @@ var Board = function () {
       this.stage.addChild(line);
       line.graphics.setStrokeStyle(3);
       line.graphics.beginStroke('grey');
+
       line.graphics.moveTo(startX, startY);
+      this.lines.push(line);
     }
   }, {
     key: 'moveDown',
@@ -166,12 +165,11 @@ var Board = function () {
         i++;
       }
       line.graphics.endStroke();
-      this.stage.update;
+      this.stage.update();
     }
   }, {
     key: 'moveUp',
     value: function moveUp(startX, startY) {
-      console.log('in moveUp');
       startY -= 10;
       var line = new createjs.Shape();
       this.drawLine(line, startX, startY);
@@ -182,7 +180,7 @@ var Board = function () {
         i++;
       }
       line.graphics.endStroke();
-      this.stage.update;
+      this.stage.update();
     }
   }, {
     key: 'moveLeft',
@@ -197,7 +195,7 @@ var Board = function () {
         i++;
       }
       line.graphics.endStroke();
-      this.stage.update;
+      this.stage.update();
     }
   }, {
     key: 'moveRight',
@@ -212,7 +210,20 @@ var Board = function () {
         i++;
       }
       line.graphics.endStroke();
-      this.stage.update;
+      this.stage.update();
+    }
+  }, {
+    key: 'dropCircles',
+    value: function dropCircles() {
+      this.lines.forEach(function (line) {
+        line.graphics.clear();
+      });
+
+      this.circles.forEach(function (circle) {
+        circle.graphics.clear();
+      });
+
+      this.stage.update();
     }
   }, {
     key: 'makeStage',
@@ -227,31 +238,26 @@ var Board = function () {
       window.onkeydown = function (e) {
         if (board.circles.length !== 0) {
           var circle = board.circles[0];
-          circle.graphics.clear().beginFill('black').drawCircle(0, 0, 10);
           switch (e.which) {
             case 38:
-              circle.graphics.clear().beginFill('black').drawCircle(0, 0, 10);
               board.moveUp(circle.x, circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id - 13));
               break;
             case 39:
               board.moveRight(circle.x, circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id));
               break;
             case 40:
               board.moveDown(circle.x, circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id + 11));
               break;
             case 37:
               board.moveLeft(circle.x, circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id - 2));
               break;
             case 13:
               //enter
+              board.dropCircles();
               board.circles = [];
           }
         }

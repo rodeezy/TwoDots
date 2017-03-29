@@ -3,11 +3,9 @@ class Board {
   constructor() {
     this.canvas = document.getElementById('Canvas');
     this.stage = new createjs.Stage("Canvas");
-    // this.stage.enableMouseOver();
-    // createjs.Ticker.addEventListener("tick", this.stage);
-    // createjs.Ticker.addEventListener("tick", this.tick);
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"]
     this.circles = [];
+    this.lines = [];
   }
 
   randColor(){
@@ -25,7 +23,6 @@ class Board {
     circle.y = yPos;
     this.stage.addChild(circle);
     circle.addEventListener("mousedown",()=>{
-      console.log(circle.x);
       if(!this.isSelected()){
         this.circles.push(circle);
       }
@@ -39,7 +36,9 @@ class Board {
     this.stage.addChild(line);
     line.graphics.setStrokeStyle(3);
     line.graphics.beginStroke('grey');
+
     line.graphics.moveTo(startX, startY);
+    this.lines.push(line);
   }
 
   moveDown(startX, startY){
@@ -53,11 +52,10 @@ class Board {
       i++;
     }
     line.graphics.endStroke();
-    this.stage.update;
+    this.stage.update();
   }
 
   moveUp(startX, startY){
-    console.log('in moveUp');
     startY-=10;
     var line = new createjs.Shape();
     this.drawLine(line, startX, startY);
@@ -68,7 +66,7 @@ class Board {
       i++;
     }
     line.graphics.endStroke();
-    this.stage.update;
+    this.stage.update();
   }
 
   moveLeft(startX, startY){
@@ -82,7 +80,7 @@ class Board {
       i++;
     }
     line.graphics.endStroke();
-    this.stage.update;
+    this.stage.update();
   }
 
   moveRight(startX, startY){
@@ -96,7 +94,19 @@ class Board {
       i++;
     }
     line.graphics.endStroke();
-    this.stage.update;
+    this.stage.update();
+  }
+
+  dropCircles(){
+    this.lines.forEach(line =>{
+      line.graphics.clear();
+    });
+
+    this.circles.forEach(circle =>{
+      circle.graphics.clear();
+    });
+
+    this.stage.update();
   }
 
   makeStage(){
@@ -110,30 +120,25 @@ class Board {
     window.onkeydown = function(e){
       if(board.circles.length !== 0){
         let circle = board.circles[0];
-        circle.graphics.clear().beginFill('black').drawCircle(0, 0, 10);
         switch(e.which){
             case 38:
-              circle.graphics.clear().beginFill('black').drawCircle(0, 0, 10);
               board.moveUp(circle.x,circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id-13));
               break;
             case 39:
               board.moveRight(circle.x,circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id));
               break;
             case 40:
               board.moveDown(circle.x,circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id+11));
               break;
             case 37:
               board.moveLeft(circle.x,circle.y);
-              // board.stage.update;
               board.circles.unshift(board.stage.getChildAt(circle.id-2));
               break;
             case 13: //enter
+              board.dropCircles();
               board.circles = [];
         }
       }
