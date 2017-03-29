@@ -80,14 +80,15 @@ var Board = __webpack_require__(2);
 var Game = __webpack_require__(3);
 
 document.addEventListener('DOMContentLoaded', function () {
-  window.spaget = spaget;
   var board = new Board();
   board.makeStage();
   window.canvas = document.getElementById('Canvas');
-  window.makeCircle = board.makeCircle.bind(board);
+  // window.makeCircle = board.makeCircle.bind(board);
   window.board = board;
 
-  // init();
+  // moveCircle(circle);
+  // window.circle = circle;
+  // window.moveCircle = moveCircle;
 });
 
 /***/ }),
@@ -213,10 +214,29 @@ var Board = function () {
       this.stage.update();
     }
   }, {
+    key: 'moveCircle',
+    value: function moveCircle(circle) {
+      createjs.Tween.get(circle)
+      // .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
+      .to({ y: circle.y + 40 }, 250);
+      // .to({alpha: 0, y: 125}, 100)
+      // .to({alpha: 1, y: 100}, 500, createjs.Ease.getPowInOut(2))
+      // .to({x: 100}, 800, createjs.Ease.getPowInOut(2));
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.addEventListener("tick", this.stage);
+    }
+  }, {
     key: 'dropCircles',
     value: function dropCircles() {
+      var _this2 = this;
+
+      var board = this;
       this.lines.forEach(function (line) {
         line.graphics.clear();
+      });
+
+      this.circles.forEach(function (circle) {
+        _this2.moveCircle(board.stage.getChildAt(circle.id - 13));
       });
 
       this.circles.forEach(function (circle) {

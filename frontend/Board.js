@@ -97,9 +97,25 @@ class Board {
     this.stage.update();
   }
 
+  moveCircle(circle) {
+    createjs.Tween.get(circle)
+      // .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
+      .to({y: circle.y + 40}, 250)
+      // .to({alpha: 0, y: 125}, 100)
+      // .to({alpha: 1, y: 100}, 500, createjs.Ease.getPowInOut(2))
+      // .to({x: 100}, 800, createjs.Ease.getPowInOut(2));
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", this.stage);
+  }
+
   dropCircles(){
+    const board = this;
     this.lines.forEach(line =>{
       line.graphics.clear();
+    });
+
+    this.circles.forEach(circle =>{
+      this.moveCircle(board.stage.getChildAt(circle.id-13));
     });
 
     this.circles.forEach(circle =>{
