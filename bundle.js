@@ -226,17 +226,34 @@ var Board = function () {
       createjs.Ticker.addEventListener("tick", this.stage);
     }
   }, {
+    key: 'genCircles',
+    value: function genCircles() {}
+  }, {
+    key: 'moveCircleColumn',
+    value: function moveCircleColumn(circle) {
+      if (circle.y === 40) {
+        return;
+      } else {
+        return; //placeholder
+      }
+    }
+  }, {
     key: 'dropCircles',
     value: function dropCircles() {
       var _this2 = this;
 
-      var board = this;
       this.lines.forEach(function (line) {
         line.graphics.clear();
       });
 
       this.circles.forEach(function (circle) {
-        _this2.moveCircle(board.stage.getChildAt(circle.id - 13));
+        _this2.moveCircle(_this2.stage.getChildAt(circle.id - 13));
+      });
+
+      // () => this.stage.swapChildrenAt(circle.id - 1, circle.id - 13)
+
+      this.circles.forEach(function (circle) {
+        _this2.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
       });
 
       this.circles.forEach(function (circle) {

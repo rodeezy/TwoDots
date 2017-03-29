@@ -108,15 +108,33 @@ class Board {
     createjs.Ticker.addEventListener("tick", this.stage);
   }
 
+  genCircles(){
+
+  }
+
+  moveCircleColumn(circle){
+    if (circle.y === 40){
+      return;
+    }
+    else{
+      return; //placeholder
+    }
+  }
+
   dropCircles(){
-    const board = this;
     this.lines.forEach(line =>{
       line.graphics.clear();
     });
 
     this.circles.forEach(circle =>{
-      this.moveCircle(board.stage.getChildAt(circle.id-13));
+      this.moveCircle(this.stage.getChildAt(circle.id-13));
     });
+
+    // () => this.stage.swapChildrenAt(circle.id - 1, circle.id - 13)
+
+    this.circles.forEach(circle =>{
+      this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
+    })
 
     this.circles.forEach(circle =>{
       circle.graphics.clear();
