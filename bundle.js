@@ -216,12 +216,7 @@ var Board = function () {
   }, {
     key: 'moveCircle',
     value: function moveCircle(circle) {
-      createjs.Tween.get(circle)
-      // .to({x: 400}, 1000, createjs.Ease.getPowInOut(4))
-      .to({ y: circle.y + 40 }, 250);
-      // .to({alpha: 0, y: 125}, 100)
-      // .to({alpha: 1, y: 100}, 500, createjs.Ease.getPowInOut(2))
-      // .to({x: 100}, 800, createjs.Ease.getPowInOut(2));
+      createjs.Tween.get(circle).to({ y: circle.y + 40 }, 250);
       createjs.Ticker.setFPS(60);
       createjs.Ticker.addEventListener("tick", this.stage);
     }
@@ -234,6 +229,9 @@ var Board = function () {
       if (circle.y === 40) {
         return;
       } else {
+        // for(let i=0; i< this.circles.length; i++){
+        //   this.circles[i] = this.stage.getChildAt(this.circles[i].id-13);
+        // }
         return; //placeholder
       }
     }
@@ -248,15 +246,7 @@ var Board = function () {
 
       this.circles.forEach(function (circle) {
         _this2.moveCircle(_this2.stage.getChildAt(circle.id - 13));
-      });
-
-      // () => this.stage.swapChildrenAt(circle.id - 1, circle.id - 13)
-
-      this.circles.forEach(function (circle) {
         _this2.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
-      });
-
-      this.circles.forEach(function (circle) {
         circle.graphics.clear();
       });
 
