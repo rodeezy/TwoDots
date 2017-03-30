@@ -23,6 +23,7 @@ class Board {
     circle.y = yPos;
     this.stage.addChild(circle);
     circle.addEventListener("mousedown",()=>{
+      console.log(circle);
       if(!this.isSelected()){
         this.circles.push(circle);
       }
@@ -108,15 +109,22 @@ class Board {
 
   }
 
+  circleAbove(circle){
+    return this.stage.getChildAt(circle.id-13);
+  }
+
   moveCircleColumn(circle){
+    if(!circle){
+      return;
+    }
+    this.moveCircle(circle);
+    // this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
     if (circle.y === 40){
+      // this.makeCircle(circle.x, 40);
       return;
     }
     else{
-      // for(let i=0; i< this.circles.length; i++){
-      //   this.circles[i] = this.stage.getChildAt(this.circles[i].id-13);
-      // }
-      return; //placeholder
+      this.moveCircleColumn(this.circleAbove(circle));
     }
   }
 
@@ -124,13 +132,11 @@ class Board {
     this.lines.forEach(line =>{
       line.graphics.clear();
     });
-
     this.circles.forEach(circle =>{
-      this.moveCircle(this.stage.getChildAt(circle.id-13));
+      this.moveCircleColumn(this.stage.getChildAt(circle.id-13));
       this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
       circle.graphics.clear();
     });
-
     this.stage.update();
   }
 

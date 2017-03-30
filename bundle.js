@@ -136,6 +136,7 @@ var Board = function () {
       circle.y = yPos;
       this.stage.addChild(circle);
       circle.addEventListener("mousedown", function () {
+        console.log(circle);
         if (!_this.isSelected()) {
           _this.circles.push(circle);
         }
@@ -224,15 +225,23 @@ var Board = function () {
     key: 'genCircles',
     value: function genCircles() {}
   }, {
+    key: 'circleAbove',
+    value: function circleAbove(circle) {
+      return this.stage.getChildAt(circle.id - 13);
+    }
+  }, {
     key: 'moveCircleColumn',
     value: function moveCircleColumn(circle) {
+      if (!circle) {
+        return;
+      }
+      this.moveCircle(circle);
+      // this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
       if (circle.y === 40) {
+        // this.makeCircle(circle.x, 40);
         return;
       } else {
-        // for(let i=0; i< this.circles.length; i++){
-        //   this.circles[i] = this.stage.getChildAt(this.circles[i].id-13);
-        // }
-        return; //placeholder
+        this.moveCircleColumn(this.circleAbove(circle));
       }
     }
   }, {
@@ -243,13 +252,11 @@ var Board = function () {
       this.lines.forEach(function (line) {
         line.graphics.clear();
       });
-
       this.circles.forEach(function (circle) {
-        _this2.moveCircle(_this2.stage.getChildAt(circle.id - 13));
+        _this2.moveCircleColumn(_this2.stage.getChildAt(circle.id - 13));
         _this2.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
         circle.graphics.clear();
       });
-
       this.stage.update();
     }
   }, {
