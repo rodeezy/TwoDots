@@ -63,37 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var spaget = function spaget() {
-  return console.log('spaghet');
-};
-var Board = __webpack_require__(2);
-var Game = __webpack_require__(3);
-
-document.addEventListener('DOMContentLoaded', function () {
-  var board = new Board();
-  board.makeStage();
-  window.canvas = document.getElementById('Canvas');
-  // window.makeCircle = board.makeCircle.bind(board);
-  window.board = board;
-
-  // moveCircle(circle);
-  // window.circle = circle;
-  // window.moveCircle = moveCircle;
-});
-
-/***/ }),
-/* 1 */,
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -113,6 +87,8 @@ var Board = function () {
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"];
     this.circles = [];
     this.lines = [];
+    this.posGrid = [[]];
+    this.grid = [[]];
   }
 
   _createClass(Board, [{
@@ -136,11 +112,12 @@ var Board = function () {
       circle.y = yPos;
       this.stage.addChild(circle);
       circle.addEventListener("mousedown", function () {
-        console.log(circle);
+        console.log(circle.id);
         if (!_this.isSelected()) {
           _this.circles.push(circle);
         }
       });
+
       this.stage.update();
     }
   }, {
@@ -220,6 +197,7 @@ var Board = function () {
       createjs.Tween.get(circle).to({ y: circle.y + 40 }, 250);
       createjs.Ticker.setFPS(60);
       createjs.Ticker.addEventListener("tick", this.stage);
+      // this.stage.swapChildrenAt(circle.id - 1, circle.id + 11);
     }
   }, {
     key: 'genCircles',
@@ -232,13 +210,15 @@ var Board = function () {
   }, {
     key: 'moveCircleColumn',
     value: function moveCircleColumn(circle) {
+      // debugger;
       if (!circle) {
         return;
       }
       this.moveCircle(circle);
-      // this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
+      this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
       if (circle.y === 40) {
-        // this.makeCircle(circle.x, 40);
+        this.makeCircle(circle.x, 40);
+        this.stage.swapChildrenAt(this.stage.getChildAt(this.stage.children.length - 1), this.stage.getChildAt(circle.id - 1));
         return;
       } else {
         this.moveCircleColumn(this.circleAbove(circle));
@@ -247,14 +227,13 @@ var Board = function () {
   }, {
     key: 'dropCircles',
     value: function dropCircles() {
-      var _this2 = this;
-
+      var board = this;
       this.lines.forEach(function (line) {
         line.graphics.clear();
       });
       this.circles.forEach(function (circle) {
-        _this2.moveCircleColumn(_this2.stage.getChildAt(circle.id - 13));
-        _this2.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
+        board.moveCircleColumn(board.stage.getChildAt(circle.id - 13));
+        // board.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
         circle.graphics.clear();
       });
       this.stage.update();
@@ -305,7 +284,7 @@ var Board = function () {
 module.exports = Board;
 
 /***/ }),
-/* 3 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -313,7 +292,7 @@ module.exports = Board;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Board = __webpack_require__(2);
+var Board = __webpack_require__(0);
 
 var Game = function Game() {
   _classCallCheck(this, Game);
@@ -327,6 +306,31 @@ module.exports = Game;
 stage.getChildAt(0).graphics._fill.style===stage.getChildAt(3).graphics._fill.style
 (checks color match)
 */
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var spaget = function spaget() {
+  return console.log('spaghet');
+};
+var Board = __webpack_require__(0);
+var Game = __webpack_require__(1);
+
+document.addEventListener('DOMContentLoaded', function () {
+  var board = new Board();
+  board.makeStage();
+  window.canvas = document.getElementById('Canvas');
+  // window.makeCircle = board.makeCircle.bind(board);
+  window.board = board;
+
+  // moveCircle(circle);
+  // window.circle = circle;
+  // window.moveCircle = moveCircle;
+});
 
 /***/ })
 /******/ ]);

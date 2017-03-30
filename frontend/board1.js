@@ -1,13 +1,12 @@
-//grid is 12x12
-class Board {
+class Board1 {
+  //grid is 12x12
   constructor() {
     this.canvas = document.getElementById('Canvas');
     this.stage = new createjs.Stage("Canvas");
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"]
     this.circles = [];
     this.lines = [];
-    this.posGrid = [[]];
-    this.grid = [[]];
+    this.grid = [...Array(12).keys()].map(i => Array(12));
   }
 
   randColor(){
@@ -24,16 +23,34 @@ class Board {
     circle.x = xPos;
     circle.y = yPos;
     this.stage.addChild(circle);
+
     circle.addEventListener("mousedown",()=>{
-      console.log(circle.id);
       if(!this.isSelected()){
         this.circles.push(circle);
       }
       }
     );
-
+    this.placeInGrid(circle, xPos, yPos);
     this.stage.update();
   }
+
+  placeInGrid(circle, xPos, yPos){
+    let row = (yPos - 40)/40;
+    let column = (xPos - 40)/40;
+    this.grid[row][column] = circle;
+  }
+
+  pushToGrid(circle, row, column){
+    this.grid[row][column] = circle;
+    circle.x = (column + 1) * 40;
+    circle.y = (row + 1) * 40;
+    this.stage.update();
+  }
+
+  swap(a, b){
+    [this.grid[a[0]][a[1]], this.grid[b[0]][b[1]]] = [this.grid[b[0]][b[1]], this.grid[a[0]][a[1]]];
+  }
+
 
   drawLine(line, startX, startY) {
     // debugger;
@@ -106,7 +123,8 @@ class Board {
       .to({y: circle.y + 40}, 250)
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", this.stage);
-    // this.stage.swapChildrenAt(circle.id - 1, circle.id + 11);
+    this.stage.swapChildrenAt(circle.id - 1, circle.id + 11);
+
 
   }
 
@@ -124,10 +142,9 @@ class Board {
       return;
     }
     this.moveCircle(circle);
-    this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
+    // this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
     if (circle.y === 40){
-      this.makeCircle(circle.x, 40);
-      this.stage.swapChildrenAt(this.stage.getChildAt(this.stage.children.length - 1), this.stage.getChildAt(circle.id - 1));
+      // this.makeCircle(circle.x, 40);
       return;
     }
     else{
@@ -184,6 +201,5 @@ class Board {
       }
     }
   }
-}
 
-module.exports = Board;
+}
