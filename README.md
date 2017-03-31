@@ -1,6 +1,6 @@
 # TwoDots
 
-[pages link]: rodeezy.github.io/TwoDots
+[live link](rodeezy.github.io/TwoDots)
 
 TwoDots is an single-player pattern game. It is a web application, inspired by the popular iPhone game of the same name, and built using vanilla javascript with the EaselJs library.
 
