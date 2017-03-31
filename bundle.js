@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,18 +77,22 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-//grid is 12x12
+var Grid = __webpack_require__(2);
+var Game = __webpack_require__(1);
+//consider making circle class
+
 var Board = function () {
-  function Board() {
+  //grid is 12x12
+  function Board(game) {
     _classCallCheck(this, Board);
 
-    this.canvas = document.getElementById('Canvas');
     this.stage = new createjs.Stage("Canvas");
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"];
-    this.circles = [];
+    // this.circles = [];
     this.lines = [];
-    this.posGrid = [[]];
-    this.grid = [[]];
+    this.grid = new Grid(this);
+    this.game = game;
+    this.validMove = this.game.validMove;
   }
 
   _createClass(Board, [{
@@ -99,26 +103,24 @@ var Board = function () {
   }, {
     key: 'isSelected',
     value: function isSelected() {
-      return this.circles.length !== 0;
+      return this.grid.dropQueue.length !== 0;
     }
   }, {
     key: 'makeCircle',
-    value: function makeCircle(xPos, yPos) {
-      var _this = this;
+    value: function makeCircle(row, col) {
+      var circle = this.grid.createCircle(row, col);
+      // circle.x = xPos;
+      // circle.y = yPos;
 
-      var circle = new createjs.Shape();
-      circle.graphics.beginFill(this.randColor()).drawCircle(0, 0, 10);
-      circle.x = xPos;
-      circle.y = yPos;
-      this.stage.addChild(circle);
-      circle.addEventListener("mousedown", function () {
-        console.log(circle.id);
-        if (!_this.isSelected()) {
-          _this.circles.push(circle);
-        }
-      });
-
-      this.stage.update();
+      // circle.addEventListener("mousedown",()=>{
+      //   console.log('click!');
+      //   if(!this.isSelected()){
+      //     //add game logic and other logic
+      //     this.grid.dropQueue.push(circle);
+      //   }}
+      // );
+      //
+      // this.stage.update();
     }
   }, {
     key: 'drawLine',
@@ -131,9 +133,18 @@ var Board = function () {
       line.graphics.moveTo(startX, startY);
       this.lines.push(line);
     }
+
+    //move[Direction] refers to line move
+
   }, {
     key: 'moveDown',
     value: function moveDown(startX, startY) {
+      //can change numbers to attributes
+      // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+      // let nextPos = [this.toGridLoc(startY)+1,this.toGridLoc(startX)];
+      // if(!this.game.validMove(startPos, nextPos)){
+      //   return;
+      // }
       startY += 10;
       var line = new createjs.Shape();
       this.drawLine(line, startX, startY);
@@ -147,8 +158,18 @@ var Board = function () {
       this.stage.update();
     }
   }, {
+    key: 'toGridLoc',
+    value: function toGridLoc(pos) {
+      return pos / 40 - 1;
+    }
+  }, {
     key: 'moveUp',
     value: function moveUp(startX, startY) {
+      // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+      // let nextPos = [this.toGridLoc(startY)-1,this.toGridLoc(startX)];
+      // if(!this.game.validMove(startPos, nextPos)){
+      //   return;
+      // }
       startY -= 10;
       var line = new createjs.Shape();
       this.drawLine(line, startX, startY);
@@ -164,6 +185,11 @@ var Board = function () {
   }, {
     key: 'moveLeft',
     value: function moveLeft(startX, startY) {
+      // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+      // let nextPos = [this.toGridLoc(startY),this.toGridLoc(startX)-1];
+      // if(!this.game.validMove(startPos, nextPos)){
+      //   return;
+      // }
       startX -= 10;
       var line = new createjs.Shape();
       this.drawLine(line, startX, startY);
@@ -179,6 +205,11 @@ var Board = function () {
   }, {
     key: 'moveRight',
     value: function moveRight(startX, startY) {
+      // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+      // let nextPos = [this.toGridLoc(startY),this.toGridLoc(startX)+1];
+      // if(!this.game.validMove(startPos, nextPos)){
+      //   return;
+      // }
       startX += 10;
       var line = new createjs.Shape();
       this.drawLine(line, startX, startY);
@@ -192,89 +223,23 @@ var Board = function () {
       this.stage.update();
     }
   }, {
-    key: 'moveCircle',
-    value: function moveCircle(circle) {
-      createjs.Tween.get(circle).to({ y: circle.y + 40 }, 250);
-      createjs.Ticker.setFPS(60);
-      createjs.Ticker.addEventListener("tick", this.stage);
-      // this.stage.swapChildrenAt(circle.id - 1, circle.id + 11);
-    }
-  }, {
-    key: 'genCircles',
-    value: function genCircles() {}
-  }, {
-    key: 'circleAbove',
-    value: function circleAbove(circle) {
-      return this.stage.getChildAt(circle.id - 13);
-    }
-  }, {
-    key: 'moveCircleColumn',
-    value: function moveCircleColumn(circle) {
-      // debugger;
-      if (!circle) {
-        return;
-      }
-      this.moveCircle(circle);
-      this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
-      if (circle.y === 40) {
-        this.makeCircle(circle.x, 40);
-        this.stage.swapChildrenAt(this.stage.getChildAt(this.stage.children.length - 1), this.stage.getChildAt(circle.id - 1));
-        return;
-      } else {
-        this.moveCircleColumn(this.circleAbove(circle));
-      }
-    }
-  }, {
-    key: 'dropCircles',
-    value: function dropCircles() {
-      var board = this;
+    key: 'clearLines',
+    value: function clearLines() {
       this.lines.forEach(function (line) {
         line.graphics.clear();
-      });
-      this.circles.forEach(function (circle) {
-        board.moveCircleColumn(board.stage.getChildAt(circle.id - 13));
-        // board.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
-        circle.graphics.clear();
       });
       this.stage.update();
     }
   }, {
     key: 'makeStage',
     value: function makeStage() {
-      var i = void 0;
+      var col = void 0;
       var board = this;
-      for (var j = 40; j < this.canvas.height; j += 40) {
-        for (i = 40; i < this.canvas.width; i += 40) {
-          board.makeCircle(i, j);
+      for (var row = 0; row < this.grid.height; row++) {
+        for (col = 0; col < this.grid.width; col++) {
+          board.makeCircle(row, col);
         }
       }
-      window.onkeydown = function (e) {
-        if (board.circles.length !== 0) {
-          var circle = board.circles[0];
-          switch (e.which) {
-            case 38:
-              board.moveUp(circle.x, circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id - 13));
-              break;
-            case 39:
-              board.moveRight(circle.x, circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id));
-              break;
-            case 40:
-              board.moveDown(circle.x, circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id + 11));
-              break;
-            case 37:
-              board.moveLeft(circle.x, circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id - 2));
-              break;
-            case 13:
-              //enter
-              board.dropCircles();
-              board.circles = [];
-          }
-        }
-      };
     }
   }]);
 
@@ -290,15 +255,138 @@ module.exports = Board;
 "use strict";
 
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Board = __webpack_require__(0);
 
-var Game = function Game() {
-  _classCallCheck(this, Game);
+var Game = function () {
+  function Game() {
+    _classCallCheck(this, Game);
 
-  this.board = new Board();
-};
+    this.board = new Board(this);
+    this.grid = this.board.grid;
+    this.board.makeStage();
+    this.lastMove = '';
+
+    //CONTROLS
+    var board = this.board;
+    var game = this;
+    window.onkeydown = function (e) {
+      if (board.grid.dropQueue.length !== 0) {
+        var circle = board.grid.dropQueue[0];
+        switch (e.which) {
+          case 38:
+            if (!game.validMove(circle.pos, [circle.pos[0] - 1, circle.pos[1]], 'up')) {
+              console.log('invalid move', circle.pos, [circle.pos[0] + 1, circle.pos[1]], 'up');
+              break;
+            }
+            board.moveUp(circle.x, circle.y);
+            board.grid.prependToDrop(board.grid.above(circle));
+            game.lastMove = 'up';
+            break;
+          case 39:
+            if (!game.validMove(circle.pos, [circle.pos[0], circle.pos[1] + 1], 'right')) {
+              console.log('invalid move', circle.pos, [circle.pos[0] + 1, circle.pos[1]], 'right');
+              break;
+            }
+            board.moveRight(circle.x, circle.y);
+            board.grid.prependToDrop(board.grid.rightOf(circle));
+            game.lastMove = 'right';
+            break;
+          case 40:
+            if (!game.validMove(circle.pos, [circle.pos[0] + 1, circle.pos[1]], 'down')) {
+              console.log('invalid move', circle.pos, [circle.pos[0] + 1, circle.pos[1]], 'down');
+              break;
+            }
+            board.moveDown(circle.x, circle.y);
+            board.grid.prependToDrop(board.grid.leftOf(circle));
+            game.lastMove = 'down';
+            break;
+          case 37:
+            if (!game.validMove(circle.pos, [circle.pos[0], circle.pos[1] - 1], 'left')) {
+              console.log('invalid move', circle.pos, [circle.pos[0] + 1, circle.pos[1]], 'left');
+              break;
+            }
+            board.moveLeft(circle.x, circle.y);
+            board.grid.prependToDrop(board.grid.below(circle));
+            game.lastMove = 'left';
+            break;
+          case 13:
+            //enter
+            // debugger;
+            board.grid.gridAction();
+            board.clearLines();
+            game.lastMove = '';
+          // board.grid.dropQueue = [];
+        }
+      }
+    };
+  }
+
+  _createClass(Game, [{
+    key: 'color',
+    value: function color(circle) {
+      return circle.graphics._fill.style;
+    }
+  }, {
+    key: 'getGridPos',
+    value: function getGridPos(circle) {
+      var xPos = circle.gridPos.x;
+      var yPos = circle.gridPos.y;
+      return [xPos, yPos];
+    }
+  }, {
+    key: 'backTrace',
+    value: function backTrace(move) {
+      switch (this.lastMove) {
+        case 'right':
+          return move === 'left';
+          break;
+        case 'left':
+          return move === 'right';
+          break;
+        case 'up':
+          return move === 'down';
+          break;
+        case 'down':
+          return move === 'up';
+          break;
+        default:
+          return false;
+      }
+    }
+  }, {
+    key: 'inBounds',
+    value: function inBounds(pos) {
+      var _pos = _slicedToArray(pos, 2),
+          row = _pos[0],
+          col = _pos[1];
+
+      var _ref = [this.grid.height, this.grid.width],
+          height = _ref[0],
+          width = _ref[1];
+
+      return !(row < 0 || row >= height || col < 0 || col >= width);
+    }
+    //check color match, bounds, already in queue...
+
+  }, {
+    key: 'validMove',
+    value: function validMove(startPos, nextPos, move) {
+      var startCircle = this.grid.getCircleAt(startPos);
+      var nextCircle = this.grid.getCircleAt(nextPos);
+      return this.inBounds(nextPos) && this.color(startCircle) === this.color(nextCircle) && !this.backTrace(move);
+      // && !this.grid.dropQueue.includes(nextCircle);
+      //last cond needs to be changed for square rule
+    }
+  }]);
+
+  return Game;
+}();
 
 module.exports = Game;
 
@@ -314,18 +402,291 @@ stage.getChildAt(0).graphics._fill.style===stage.getChildAt(3).graphics._fill.st
 "use strict";
 
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Board = __webpack_require__(0);
+//consider changing names to avoid "Board.grid.grid"
+
+var Grid = function () {
+  function Grid(board) {
+    var _this = this;
+
+    _classCallCheck(this, Grid);
+
+    this.width = 12;
+    this.height = 12;
+    this.spacing = 40;
+    this.circleRadius = 10;
+
+    this.grid = [].concat(_toConsumableArray(Array(this.height).keys())).map(function (i) {
+      return Array(_this.width);
+    });
+    this.dropQueue = [];
+    //sort drop Queue appropriately before drop
+    this.board = board;
+    this.stage = board.stage;
+    this.squareColor = '';
+    //prob only keep one of above two lines
+  }
+
+  _createClass(Grid, [{
+    key: 'fallAnimation',
+    value: function fallAnimation(circle) {
+      createjs.Tween.get(circle).to({ y: circle.y + this.spacing }, 250);
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.addEventListener("tick", this.stage);
+    }
+  }, {
+    key: 'columnFallAnimation',
+    value: function columnFallAnimation(circle) {}
+
+    //think about where to throw stage.update()'s
+
+  }, {
+    key: 'createCircle',
+    value: function createCircle(row, col) {
+      var _this2 = this;
+
+      var circle = new createjs.Shape();
+      //this.setFallAnimation(circle);
+      circle.pos = [row, col];
+      this.pushAt(circle, row, col);
+      this.updateGridPos(circle, row, col);
+      circle.graphics.beginFill(this.board.randColor()).drawCircle(0, 0, this.circleRadius);
+      //consider diff place to import color from
+      this.mapCircletoStage(circle);
+      this.stage.addChild(circle);
+
+      circle.addEventListener("mousedown", function () {
+        console.log('click!');
+        if (_this2.dropQueue.length === 0) {
+          //add game logic and other logic
+          _this2.prependToDrop(circle);
+        }
+      });
+
+      this.stage.update();
+
+      return circle;
+    }
+  }, {
+    key: 'mapCircletoStage',
+    value: function mapCircletoStage(circle) {
+      var xPos = (circle.gridPos.col + 1) * this.spacing;
+      var yPos = (circle.gridPos.row + 1) * this.spacing;
+      circle.x = xPos;
+      circle.y = yPos;
+      this.stage.update();
+    }
+  }, {
+    key: 'mapGridtoStage',
+    value: function mapGridtoStage() {
+      var _this3 = this;
+
+      function flatten(arr) {
+        return [].concat.apply([], arr);
+      }
+      this.grid.flatten.forEach(function (circle) {
+        return _this3.mapCircletoStage(circle);
+      });
+    }
+
+    //accepts 1 arg as coord array or 2 args as coords
+
+  }, {
+    key: 'getCircleAt',
+    value: function getCircleAt(pos) {
+      var _pos = _slicedToArray(pos, 2),
+          row = _pos[0],
+          col = _pos[1];
+
+      return this.grid[row][col];
+    }
+
+    // SINGLE DOT LIFE CYCLE
+
+  }, {
+    key: 'remove',
+    value: function remove(row, col) {
+      // debugger;
+      var circle = this.grid[row][col];
+      this.stage.removeChild(circle);
+      //consider implement of removeChildAt for speed (poss mem tradeoff by assigning attr)
+      this.grid[row][col] = "NULL";
+    }
+  }, {
+    key: 'add',
+    value: function add(col) {
+      // debugger;
+
+      //insert new animation
+      var circle = this.createCircle(0, col);
+      this.grid[0][col] = circle;
+      this.updateGridPos(circle, 0, col);
+    }
+
+    //move circ at row,col to row+1,col (row+1 here is row in (add and) remove)
+
+  }, {
+    key: 'moveDown',
+    value: function moveDown(row, col) {
+      // debugger;
+
+      //insert animation
+      var circle = this.grid[row][col];
+      this.grid[row + 1][col] = circle;
+      // this.fallAnimation(circle);
+      this.stage.update();
+      this.updateGridPos(circle, row + 1, col);
+      this.mapCircletoStage(circle, row + 1, col);
+    }
+
+    //remove sequence
+
+  }, {
+    key: 'dotAction',
+    value: function dotAction(row, col) {
+      // debugger;
+      this.remove(row, col);
+      this.columnFall(row - 1, col);
+      this.add(col);
+    }
+    // END SINGLE DOT LIFE CYCLE
+
+  }, {
+    key: 'columnFall',
+    value: function columnFall(row, col) {
+      if (row < 0) {
+        return;
+      } else {
+        this.moveDown(row, col);
+        // this.fallAnimation(this.getCircleAt(row,col));
+        this.columnFall(row - 1, col);
+      }
+    }
+    //loop dotAction appropriately
+
+  }, {
+    key: 'gridAction',
+    value: function gridAction() {
+      var _this4 = this;
+
+      // debugger;
+      // let grid = this;
+      if (this.squareColor) {
+        this.grid.forEach(function (row) {
+          return row.forEach(function (circle) {
+            if (_this4.color(circle) === _this4.squareColor) {
+              _this4.prependToDrop(circle);
+            }
+          });
+        });
+      }
+      this.sortDropQueue();
+      this.dropQueue.forEach(function (circle) {
+        return _this4.dotAction(circle.gridPos.row, circle.gridPos.col);
+      });
+      this.dropQueue = [];
+      this.squareColor = '';
+    }
+  }, {
+    key: 'updateGridPos',
+    value: function updateGridPos(circle, row, col) {
+      circle.gridPos = { 'row': row, 'col': col };
+      circle.pos = [row, col];
+    }
+  }, {
+    key: 'sortDropQueue',
+    value: function sortDropQueue() {
+      function compare(a, b) {
+        if (a.gridPos.row < b.gridPos.row) {
+          return -1;
+        }
+        if (a.gridPos.row > b.gridPos.row) {
+          return 1;
+        }
+        return 0;
+      }
+      this.dropQueue.sort(compare);
+    }
+  }, {
+    key: 'color',
+    value: function color(circle) {
+      return circle.graphics._fill.style;
+    }
+
+    //push to dropQueue
+
+  }, {
+    key: 'prependToDrop',
+    value: function prependToDrop(circle) {
+      if (this.dropQueue.includes(circle)) {
+        this.squareColor = this.color(circle);
+      } else {
+        this.dropQueue.unshift(circle);
+      }
+    }
+  }, {
+    key: 'pushAt',
+    value: function pushAt(circle, row, col) {
+      this.grid[row][col] = circle;
+    }
+
+    //POSITION HELPERS
+
+  }, {
+    key: 'above',
+    value: function above(circle) {
+      return this.grid[circle.gridPos.row - 1][circle.gridPos.col];
+    }
+  }, {
+    key: 'leftOf',
+    value: function leftOf(circle) {
+      return this.grid[circle.gridPos.row + 1][circle.gridPos.col];
+    }
+  }, {
+    key: 'below',
+    value: function below(circle) {
+      return this.grid[circle.gridPos.row][circle.gridPos.col - 1];
+    }
+  }, {
+    key: 'rightOf',
+    value: function rightOf(circle) {
+      return this.grid[circle.gridPos.row][circle.gridPos.col + 1];
+    }
+    //END POSITION HELPERS
+
+  }]);
+
+  return Grid;
+}();
+
+module.exports = Grid;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var spaget = function spaget() {
   return console.log('spaghet');
 };
-var Board = __webpack_require__(0);
 var Game = __webpack_require__(1);
+var Board = __webpack_require__(0);
 
 document.addEventListener('DOMContentLoaded', function () {
-  var board = new Board();
-  board.makeStage();
+  var game = new Game();
   window.canvas = document.getElementById('Canvas');
   // window.makeCircle = board.makeCircle.bind(board);
-  window.board = board;
+  window.board = game.board;
 
   // moveCircle(circle);
   // window.circle = circle;

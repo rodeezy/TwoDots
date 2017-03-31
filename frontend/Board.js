@@ -1,13 +1,16 @@
-//grid is 12x12
+const Grid = require('./grid');
+const Game = require('./game');
+//consider making circle class
 class Board {
-  constructor() {
-    this.canvas = document.getElementById('Canvas');
+  //grid is 12x12
+  constructor(game) {
     this.stage = new createjs.Stage("Canvas");
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"]
-    this.circles = [];
+    // this.circles = [];
     this.lines = [];
-    this.posGrid = [[]];
-    this.grid = [[]];
+    this.grid = new Grid(this);
+    this.game = game;
+    this.validMove = this.game.validMove;
   }
 
   randColor(){
@@ -15,25 +18,25 @@ class Board {
   }
 
   isSelected(){
-    return this.circles.length !== 0;
+    return this.grid.dropQueue.length !== 0;
   }
 
-  makeCircle(xPos, yPos) {
-    var circle = new createjs.Shape();
-    circle.graphics.beginFill(this.randColor()).drawCircle(0, 0, 10);
-    circle.x = xPos;
-    circle.y = yPos;
-    this.stage.addChild(circle);
-    circle.addEventListener("mousedown",()=>{
-      console.log(circle.id);
-      if(!this.isSelected()){
-        this.circles.push(circle);
-      }
-      }
-    );
+  makeCircle(row, col) {
+    let circle = this.grid.createCircle(row, col);
+    // circle.x = xPos;
+    // circle.y = yPos;
 
-    this.stage.update();
+    // circle.addEventListener("mousedown",()=>{
+    //   console.log('click!');
+    //   if(!this.isSelected()){
+    //     //add game logic and other logic
+    //     this.grid.dropQueue.push(circle);
+    //   }}
+    // );
+    //
+    // this.stage.update();
   }
+
 
   drawLine(line, startX, startY) {
     // debugger;
@@ -45,7 +48,15 @@ class Board {
     this.lines.push(line);
   }
 
+  //move[Direction] refers to line move
+
   moveDown(startX, startY){
+    //can change numbers to attributes
+    // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+    // let nextPos = [this.toGridLoc(startY)+1,this.toGridLoc(startX)];
+    // if(!this.game.validMove(startPos, nextPos)){
+    //   return;
+    // }
     startY+=10;
     var line = new createjs.Shape();
     this.drawLine(line, startX, startY);
@@ -59,7 +70,16 @@ class Board {
     this.stage.update();
   }
 
+  toGridLoc(pos){
+    return pos/40 - 1;
+  }
+
   moveUp(startX, startY){
+    // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+    // let nextPos = [this.toGridLoc(startY)-1,this.toGridLoc(startX)];
+    // if(!this.game.validMove(startPos, nextPos)){
+    //   return;
+    // }
     startY-=10;
     var line = new createjs.Shape();
     this.drawLine(line, startX, startY);
@@ -74,6 +94,11 @@ class Board {
   }
 
   moveLeft(startX, startY){
+    // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+    // let nextPos = [this.toGridLoc(startY),this.toGridLoc(startX)-1];
+    // if(!this.game.validMove(startPos, nextPos)){
+    //   return;
+    // }
     startX-=10;
     var line = new createjs.Shape();
     this.drawLine(line, startX, startY);
@@ -88,6 +113,11 @@ class Board {
   }
 
   moveRight(startX, startY){
+    // let startPos = [this.toGridLoc(startY),this.toGridLoc(startX)];
+    // let nextPos = [this.toGridLoc(startY),this.toGridLoc(startX)+1];
+    // if(!this.game.validMove(startPos, nextPos)){
+    //   return;
+    // }
     startX+=10;
     var line = new createjs.Shape();
     this.drawLine(line, startX, startY);
@@ -101,89 +131,23 @@ class Board {
     this.stage.update();
   }
 
-  moveCircle(circle) {
-    createjs.Tween.get(circle)
-      .to({y: circle.y + 40}, 250)
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", this.stage);
-    // this.stage.swapChildrenAt(circle.id - 1, circle.id + 11);
-
-  }
-
-  genCircles(){
-
-  }
-
-  circleAbove(circle){
-    return this.stage.getChildAt(circle.id-13);
-  }
-
-  moveCircleColumn(circle){
-    // debugger;
-    if(!circle){
-      return;
-    }
-    this.moveCircle(circle);
-    this.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
-    if (circle.y === 40){
-      this.makeCircle(circle.x, 40);
-      this.stage.swapChildrenAt(this.stage.getChildAt(this.stage.children.length - 1), this.stage.getChildAt(circle.id - 1));
-      return;
-    }
-    else{
-      this.moveCircleColumn(this.circleAbove(circle));
-    }
-  }
-
-  dropCircles(){
-    const board = this;
+  clearLines() {
     this.lines.forEach(line =>{
       line.graphics.clear();
-    });
-    this.circles.forEach(circle =>{
-      board.moveCircleColumn(board.stage.getChildAt(circle.id-13));
-      // board.stage.swapChildrenAt(circle.id - 1, circle.id - 13);
-      circle.graphics.clear();
     });
     this.stage.update();
   }
 
   makeStage(){
-    let i;
+    let col;
     let board = this;
-    for(let j=40;j<this.canvas.height;j+=40){
-      for(i=40;i<this.canvas.width;i+=40){
-        board.makeCircle(i, j);
-
-      }
-    }
-    window.onkeydown = function(e){
-      if(board.circles.length !== 0){
-        let circle = board.circles[0];
-        switch(e.which){
-            case 38:
-              board.moveUp(circle.x,circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id-13));
-              break;
-            case 39:
-              board.moveRight(circle.x,circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id));
-              break;
-            case 40:
-              board.moveDown(circle.x,circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id+11));
-              break;
-            case 37:
-              board.moveLeft(circle.x,circle.y);
-              board.circles.unshift(board.stage.getChildAt(circle.id-2));
-              break;
-            case 13: //enter
-              board.dropCircles();
-              board.circles = [];
-        }
+    for(let row=0;row<this.grid.height;row++){
+      for(col=0;col<this.grid.width;col++){
+        board.makeCircle(row, col);
       }
     }
   }
+
 }
 
 module.exports = Board;
