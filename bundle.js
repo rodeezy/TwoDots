@@ -627,8 +627,6 @@ var Grid = function () {
     value: function gridAction() {
       var _this4 = this;
 
-      // debugger;
-      // let grid = this;
       if (this.squareColor) {
         this.grid.forEach(function (row) {
           return row.forEach(function (circle) {

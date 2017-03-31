@@ -125,8 +125,6 @@ class Grid {
   }
   //loop dotAction appropriately
   gridAction(){
-    // debugger;
-    // let grid = this;
     if (this.squareColor){
       this.grid.forEach(row => row.forEach(circle => {
         if(this.color(circle) === this.squareColor){
