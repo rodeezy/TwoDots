@@ -6,6 +6,8 @@ class Board {
   constructor(game) {
     this.stage = new createjs.Stage("Canvas");
     this.colors = ['#fecd6c', '#77c298', '#a4547d', '#e84d60', "DeepSkyBlue"]
+    this.colorNames = {'#a4547d': 'purple' , '#fecd6c': 'yellow',
+      "DeepSkyBlue": 'blue' , '#e84d60': 'red', '#77c298': 'green'};
     // this.circles = [];
     this.lines = [];
     this.grid = new Grid(this);

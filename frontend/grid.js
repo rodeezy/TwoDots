@@ -41,7 +41,7 @@ class Grid {
     this.stage.addChild(circle);
 
     circle.addEventListener("mousedown",()=>{
-      console.log('click!');
+      // console.log(this.color(circle));
       if(this.dropQueue.length === 0){
         //add game logic and other logic
         this.prependToDrop(circle);
@@ -135,9 +135,11 @@ class Grid {
       }))
     }
     this.sortDropQueue();
+    let output = [this.squareColor||this.color(this.dropQueue[0]), this.dropQueue.length];
     this.dropQueue.forEach(circle => this.dotAction(circle.gridPos.row, circle.gridPos.col));
     this.dropQueue = [];
     this.squareColor = '';
+    return output;
   }
 
   updateGridPos(circle, row, col) {
