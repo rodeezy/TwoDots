@@ -537,13 +537,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _animations = __webpack_require__(5);
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Board = __webpack_require__(0);
-//consider changing names to avoid "Board.grid.grid"
 
+//consider changing names to avoid "Board.grid.grid"
 var Grid = function () {
   function Grid(board) {
     var _this = this;
@@ -599,6 +601,7 @@ var Grid = function () {
         if (_this2.dropQueue.length === 0) {
           //add game logic and other logic
           _this2.prependToDrop(circle);
+          (0, _animations.colorAnimate)(circle, _this2.stage);
         }
       });
 
@@ -824,6 +827,31 @@ document.addEventListener('DOMContentLoaded', function () {
   // window.circle = circle;
   // window.moveCircle = moveCircle;
 });
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var colorAnimate = exports.colorAnimate = function colorAnimate(circle, stage) {
+    var filter = new createjs.ColorFilter(1, 1.5, 1, 1);
+    circle.filters = [filter];
+    circle.cache(-20, -20, 40, 40);
+
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", function (event) {
+        //console.log('tick');
+        circle.updateCache();
+        stage.update(event);
+    });
+
+    var tween = createjs.Tween.get(filter, { loop: true }).to({ redMultiplier: 0, greenMultiplier: .7 }, 1000).to({ redMultiplier: 1, greenMultiplier: 1.5 }, 1000);
+};
 
 /***/ })
 /******/ ]);

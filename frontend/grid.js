@@ -1,4 +1,5 @@
 const Board = require('./board');
+import { colorAnimate } from './animations'
 //consider changing names to avoid "Board.grid.grid"
 class Grid {
   constructor(board) {
@@ -45,6 +46,7 @@ class Grid {
       if(this.dropQueue.length === 0){
         //add game logic and other logic
         this.prependToDrop(circle);
+        colorAnimate(circle, this.stage);
       }}
     );
 
