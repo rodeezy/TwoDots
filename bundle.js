@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,7 +77,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Grid = __webpack_require__(2);
+var Grid = __webpack_require__(3);
 var Game = __webpack_require__(1);
 //consider making circle class
 
@@ -264,7 +264,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Board = __webpack_require__(0);
-var HtmlUpdate = __webpack_require__(4);
+var HtmlUpdate = __webpack_require__(2);
 
 var Game = function () {
   function Game(difficulty) {
@@ -447,6 +447,87 @@ stage.getChildAt(0).graphics._fill.style===stage.getChildAt(3).graphics._fill.st
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var HtmlUpdate = function () {
+  function HtmlUpdate(game) {
+    _classCallCheck(this, HtmlUpdate);
+
+    this.game = game;
+    this.info = document.createElement('div');
+    this.setup(game);
+  }
+
+  _createClass(HtmlUpdate, [{
+    key: 'setup',
+    value: function setup(game) {
+      var _this = this;
+
+      var diff = game.difficulty;
+      this.info.id = 'info';
+      this.moveHeader = document.createElement('h2');
+      this.moveText = document.createTextNode(game.movesMade + '/' + game.totalMoves + ' moves left');
+      this.moveHeader.id = 'moveHeader';
+      this.body = document.getElementsByTagName('body')[0];
+      this.body.appendChild(this.info);
+      this.info.appendChild(this.moveHeader);
+      this.moveHeader.appendChild(this.moveText);
+
+      // colors
+      this.colors = game.colorsDown;
+      this.colorHeader = document.createElement('div');
+      this.colorHeader.id = 'colorHeader';
+      var colorP = void 0;
+      Object.keys(this.colors).forEach(function (color) {
+        colorP = document.createTextNode(color + ': ' + _this.colors[color] + '/' + game.count);
+        _this.colorHeader.appendChild(colorP);
+        _this.colorHeader.appendChild(document.createElement('br'));
+      });
+      this.body.appendChild(this.colorHeader);
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      var _this2 = this;
+
+      document.getElementById('moveHeader').innerHTML = this.game.movesMade + '/' + this.game.totalMoves + ' moves left';
+      var colorP = void 0;
+      var colorHeader = document.getElementById('colorHeader');
+      colorHeader.innerHTML = '';
+      Object.keys(this.colors).forEach(function (color) {
+        colorP = document.createTextNode(color + ': ' + _this2.colors[color] + '/' + _this2.game.count);
+        colorHeader.appendChild(colorP);
+        colorHeader.appendChild(document.createElement('br'));
+      });
+    }
+  }, {
+    key: 'displayWin',
+    value: function displayWin() {
+      var h1 = document.getElementsByTagName('h1')[0];
+      h1.innerHTML = 'You Win!';
+    }
+  }, {
+    key: 'displayLose',
+    value: function displayLose() {
+      var h1 = document.getElementsByTagName('h1')[0];
+      h1.innerHTML = 'You Lose!';
+    }
+  }]);
+
+  return HtmlUpdate;
+}();
+
+module.exports = HtmlUpdate;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -720,7 +801,7 @@ var Grid = function () {
 module.exports = Grid;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -731,7 +812,7 @@ var spaget = function spaget() {
 };
 var Game = __webpack_require__(1);
 var Board = __webpack_require__(0);
-var HtmlUpdate = __webpack_require__(4);
+var HtmlUpdate = __webpack_require__(2);
 
 document.addEventListener('DOMContentLoaded', function () {
   var game = new Game('medium');
@@ -743,87 +824,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // window.circle = circle;
   // window.moveCircle = moveCircle;
 });
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var HtmlUpdate = function () {
-  function HtmlUpdate(game) {
-    _classCallCheck(this, HtmlUpdate);
-
-    this.game = game;
-    this.info = document.createElement('div');
-    this.setup(game);
-  }
-
-  _createClass(HtmlUpdate, [{
-    key: 'setup',
-    value: function setup(game) {
-      var _this = this;
-
-      var diff = game.difficulty;
-      this.info.id = 'info';
-      this.moveHeader = document.createElement('h2');
-      this.moveText = document.createTextNode(game.movesMade + '/' + game.totalMoves + ' moves left');
-      this.moveHeader.id = 'moveHeader';
-      this.body = document.getElementsByTagName('body')[0];
-      this.body.appendChild(this.info);
-      this.info.appendChild(this.moveHeader);
-      this.moveHeader.appendChild(this.moveText);
-
-      // colors
-      this.colors = game.colorsDown;
-      this.colorHeader = document.createElement('div');
-      this.colorHeader.id = 'colorHeader';
-      var colorP = void 0;
-      Object.keys(this.colors).forEach(function (color) {
-        colorP = document.createTextNode(color + ': ' + _this.colors[color] + '/' + game.count);
-        _this.colorHeader.appendChild(colorP);
-        _this.colorHeader.appendChild(document.createElement('br'));
-      });
-      this.body.appendChild(this.colorHeader);
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      var _this2 = this;
-
-      document.getElementById('moveHeader').innerHTML = this.game.movesMade + '/' + this.game.totalMoves + ' moves left';
-      var colorP = void 0;
-      var colorHeader = document.getElementById('colorHeader');
-      colorHeader.innerHTML = '';
-      Object.keys(this.colors).forEach(function (color) {
-        colorP = document.createTextNode(color + ': ' + _this2.colors[color] + '/' + _this2.game.count);
-        colorHeader.appendChild(colorP);
-        colorHeader.appendChild(document.createElement('br'));
-      });
-    }
-  }, {
-    key: 'displayWin',
-    value: function displayWin() {
-      var h1 = document.getElementsByTagName('h1')[0];
-      h1.innerHTML = 'You Win!';
-    }
-  }, {
-    key: 'displayLose',
-    value: function displayLose() {
-      var h1 = document.getElementsByTagName('h1')[0];
-      h1.innerHTML = 'You Lose!';
-    }
-  }]);
-
-  return HtmlUpdate;
-}();
-
-module.exports = HtmlUpdate;
 
 /***/ })
 /******/ ]);
