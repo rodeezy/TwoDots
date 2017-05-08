@@ -75,12 +75,14 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _animations = __webpack_require__(5);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Grid = __webpack_require__(3);
 var Game = __webpack_require__(1);
-//consider making circle class
 
+//consider making circle class
 var Board = function () {
   //grid is 12x12
   function Board(game) {
@@ -261,6 +263,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _animations = __webpack_require__(5);
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Board = __webpack_require__(0);
@@ -297,6 +301,7 @@ var Game = function () {
             }
             board.moveUp(circle.x, circle.y);
             board.grid.prependToDrop(board.grid.above(circle));
+            (0, _animations.colorAnimate)(board.grid.above(circle), board.stage);
             game.lastMove = 'up';
             break;
           case 39:
@@ -306,6 +311,7 @@ var Game = function () {
             }
             board.moveRight(circle.x, circle.y);
             board.grid.prependToDrop(board.grid.rightOf(circle));
+            (0, _animations.colorAnimate)(board.grid.rightOf(circle), board.stage);
             game.lastMove = 'right';
             break;
           case 40:
@@ -315,6 +321,7 @@ var Game = function () {
             }
             board.moveDown(circle.x, circle.y);
             board.grid.prependToDrop(board.grid.leftOf(circle));
+            (0, _animations.colorAnimate)(board.grid.leftOf(circle), board.stage);
             game.lastMove = 'down';
             break;
           case 37:
@@ -324,6 +331,7 @@ var Game = function () {
             }
             board.moveLeft(circle.x, circle.y);
             board.grid.prependToDrop(board.grid.below(circle));
+            (0, _animations.colorAnimate)(board.grid.below(circle), board.stage);
             game.lastMove = 'left';
             break;
           case 13:
@@ -556,7 +564,7 @@ var Grid = function () {
     this.height = 12;
     this.spacing = 40;
     this.circleRadius = 10;
-
+    this.coloredCircles = { '#fecd6c': [], '#77c298': [], '#a4547d': [], '#e84d60': [], "DeepSkyBlue": [] };
     this.grid = [].concat(_toConsumableArray(Array(this.height).keys())).map(function (i) {
       return Array(_this.width);
     });
@@ -591,10 +599,13 @@ var Grid = function () {
       circle.pos = [row, col];
       this.pushAt(circle, row, col);
       this.updateGridPos(circle, row, col);
-      circle.graphics.beginFill(this.board.randColor()).drawCircle(0, 0, this.circleRadius);
+      var circleColor = this.board.randColor();
+
+      circle.graphics.beginFill(circleColor).drawCircle(0, 0, this.circleRadius);
       //consider diff place to import color from
       this.mapCircletoStage(circle);
       this.stage.addChild(circle);
+      //circle.stageId = this.stage.children.length - 1;
 
       circle.addEventListener("mousedown", function () {
         // console.log(this.color(circle));
@@ -760,6 +771,7 @@ var Grid = function () {
   }, {
     key: 'prependToDrop',
     value: function prependToDrop(circle) {
+      //colorAnimate(circle, this.stage);
       if (this.dropQueue.includes(circle)) {
         this.squareColor = this.color(circle);
       } else {
@@ -852,6 +864,8 @@ var colorAnimate = exports.colorAnimate = function colorAnimate(circle, stage) {
 
     var tween = createjs.Tween.get(filter, { loop: true }).to({ redMultiplier: 0, greenMultiplier: .7 }, 1000).to({ redMultiplier: 1, greenMultiplier: 1.5 }, 1000);
 };
+
+//loop on attribute to reduce memory fuck up
 
 /***/ })
 /******/ ]);

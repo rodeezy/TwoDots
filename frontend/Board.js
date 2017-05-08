@@ -1,5 +1,6 @@
 const Grid = require('./grid');
 const Game = require('./game');
+import { colorAnimate } from './animations'
 //consider making circle class
 class Board {
   //grid is 12x12

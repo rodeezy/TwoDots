@@ -14,3 +14,5 @@ export const colorAnimate = (circle, stage) => {
     .to({redMultiplier:0, greenMultiplier:.7 }, 1000)
     .to({redMultiplier:1, greenMultiplier:1.5 }, 1000);
 };
+
+//loop on attribute to reduce memory fuck up

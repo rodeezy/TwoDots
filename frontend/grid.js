@@ -7,7 +7,7 @@ class Grid {
     this.height = 12;
     this.spacing = 40;
     this.circleRadius = 10;
-
+    this.coloredCircles = {'#fecd6c': [], '#77c298': [], '#a4547d': [], '#e84d60': [], "DeepSkyBlue": []};
     this.grid = [...Array(this.height).keys()].map(i => Array(this.width));
     this.dropQueue = [];
     //sort drop Queue appropriately before drop
@@ -36,10 +36,13 @@ class Grid {
     circle.pos=[row,col];
     this.pushAt(circle, row, col);
     this.updateGridPos(circle, row, col);
-    circle.graphics.beginFill(this.board.randColor()).drawCircle(0, 0, this.circleRadius);
+    let circleColor = this.board.randColor();
+
+    circle.graphics.beginFill(circleColor).drawCircle(0, 0, this.circleRadius);
     //consider diff place to import color from
     this.mapCircletoStage(circle);
     this.stage.addChild(circle);
+    //circle.stageId = this.stage.children.length - 1;
 
     circle.addEventListener("mousedown",()=>{
       // console.log(this.color(circle));
@@ -166,6 +169,7 @@ class Grid {
 
   //push to dropQueue
   prependToDrop(circle){
+    //colorAnimate(circle, this.stage);
     if(this.dropQueue.includes(circle)){
       this.squareColor = this.color(circle);
     }

@@ -1,5 +1,6 @@
 const Board = require('./board');
 const HtmlUpdate = require('./html_update');
+import { colorAnimate } from './animations';
 class Game {
   constructor(difficulty){
     this.board = new Board(this);
@@ -29,6 +30,7 @@ class Game {
               }
               board.moveUp(circle.x,circle.y);
               board.grid.prependToDrop(board.grid.above(circle));
+              colorAnimate(board.grid.above(circle), board.stage);
               game.lastMove = 'up';
               break;
             case 39:
@@ -38,6 +40,7 @@ class Game {
               }
               board.moveRight(circle.x,circle.y);
               board.grid.prependToDrop(board.grid.rightOf(circle));
+              colorAnimate(board.grid.rightOf(circle), board.stage);
               game.lastMove = 'right';
               break;
             case 40:
@@ -47,6 +50,7 @@ class Game {
               }
               board.moveDown(circle.x,circle.y);
               board.grid.prependToDrop(board.grid.leftOf(circle));
+              colorAnimate(board.grid.leftOf(circle), board.stage);
               game.lastMove = 'down';
               break;
             case 37:
@@ -56,6 +60,7 @@ class Game {
               }
               board.moveLeft(circle.x,circle.y);
               board.grid.prependToDrop(board.grid.below(circle));
+              colorAnimate(board.grid.below(circle), board.stage);
               game.lastMove = 'left';
               break;
             case 13: //enter
